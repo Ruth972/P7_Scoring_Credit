@@ -4,7 +4,7 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 
-API_URL = "https://api-scoring-v246.onrender.com" 
+API_URL = "https://api-scoring-v246.onrender.com/predict" 
 
 # Configuration de la page
 st.set_page_config(page_title="Scoring Crédit Dashboard", layout="wide")
