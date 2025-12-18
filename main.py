@@ -39,10 +39,17 @@ def predict(data: ClientData):
         # 1. Conversion JSON -> DataFrame
         df = pd.DataFrame([data.features])
         
-        # 2. Prédiction
-        # Attention : selon ton modèle, predict_proba peut varier.
-        # Ici on suppose que c'est un classifier standard (LGBM, Sklearn)
-        score = model.predict_proba(df)[:, 1][0]
+        # --- BLOC DE NETTOYAGE CRUCIAL ---
+        # On supprime les colonnes "interdites" que le modèle ne connait pas
+        # (L'ID, la Target, et l'index s'il traîne par là)
+        cols_a_exclure = ['SK_ID_CURR', 'TARGET', 'index', 'Unnamed: 0']
+        
+        # On ne garde que les colonnes qui ne sont PAS dans la liste d'exclusion
+        df_clean = df.drop(columns=[c for c in cols_a_exclure if c in df.columns], errors='ignore')
+        # ---------------------------------
+
+        # 2. Prédiction (sur df_clean et pas df)
+        score = model.predict_proba(df_clean)[:, 1][0]
         
         seuil = 0.5 
         decision = "REFUSÉ" if score > seuil else "ACCORDÉ"
@@ -53,6 +60,7 @@ def predict(data: ClientData):
             "threshold": seuil
         }
     except Exception as e:
+        # On renvoie l'erreur exacte pour le débogage
         raise HTTPException(status_code=400, detail=str(e))
 
 if __name__ == "__main__":
