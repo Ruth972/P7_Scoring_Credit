@@ -2,6 +2,7 @@ fastapi
 uvicorn
 pandas
 scikit-learn==1.2.2
+numpy==1.23.5
 lightgbm
 mlflow
 pydantic>=2.0
