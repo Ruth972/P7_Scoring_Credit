@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+pandas
+scikit-learn
+lightgbm
+mlflow
+pydantic>=2.0
+shap
+streamlit
+requests
+gunicorn
+matplotlib
+seaborn
