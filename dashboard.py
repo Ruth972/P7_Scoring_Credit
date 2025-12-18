@@ -4,10 +4,7 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# --- ⚠️ CONFIGURATION À VÉRIFIER ---
-# En local, on utilise localhost.
-# SUR LE CLOUD (plus tard), remplace par : "https://ton-app-heroku.herokuapp.com/predict"
-API_URL = "http://127.0.0.1:8000/predict" 
+API_URL = "https://api-scoring-v246.onrender.com" 
 
 # Configuration de la page
 st.set_page_config(page_title="Scoring Crédit Dashboard", layout="wide")
