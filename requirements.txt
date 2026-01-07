@@ -15,3 +15,5 @@ seaborn
 joblib
 imbalanced-learn==0.10.1
 mlflow>=2.0.0
+pytest
+httpx

@@ -8,6 +8,9 @@ env/
 venv/
 .env
 
+# Cache des tests
+.pytest_cache/
+
 # Jupyter Notebooks checkpoints
 .ipynb_checkpoints/
 
