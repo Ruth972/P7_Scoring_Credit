@@ -71,9 +71,11 @@ def predict_credit_score(data: ClientData):
         # Utilisation de predict_proba pour obtenir la probabilité de la classe positive (Défaut de paiement)
         proba_defaut = model.predict_proba(df_clean)[:, 1][0]
         
-        # 4. Logique Métier (Seuil de décision)
-        # Un score > 0.5 indique un risque élevé, entraînant un refus
-        seuil_risque = 0.5 
+        # 4. Logique Métier (Seuil de décision optimisé)
+        # Seuil déterminé par minimisation de la fonction de coût (FN=10, FP=1)
+        # Un score > 0.059 indique un risque trop élevé pour la banque
+        seuil_risque = 0.059 
+        
         decision_finale = "REFUSÉ" if proba_defaut > seuil_risque else "ACCORDÉ"
         
         return {
