@@ -50,11 +50,11 @@ def predict_credit_score(data: ClientData):
     """
     Endpoint principal de prédiction.
     1. Reçoit les données client.
-    2. Nettoie les entrées pour correspondre au schéma d'entraînement.
-    3. Calcule la probabilité de défaut via le modèle MLflow.
+    2. Nettoie et aligne les colonnes (remplit les manquantes par 0).
+    3. Calcule la probabilité de défaut.
     """
     
-    # Vérification de la disponibilité du modèle avant traitement
+    # Vérification de la disponibilité du modèle
     if not model:
         raise HTTPException(status_code=503, detail="Service indisponible : Le modèle n'est pas chargé.")
     
@@ -62,18 +62,34 @@ def predict_credit_score(data: ClientData):
         # 1. Transformation des données d'entrée en DataFrame Pandas
         df = pd.DataFrame([data.features])
         
-        # 2. Prétraitement et Alignement des Features
-        # Suppression des identifiants et colonnes techniques non pertinentes pour la prédiction
+        # 2. Prétraitement initial (Suppression des ID)
         cols_techniques = ['SK_ID_CURR', 'TARGET', 'index', 'Unnamed: 0']
         df_clean = df.drop(columns=[c for c in cols_techniques if c in df.columns], errors='ignore')
 
+        # ======================================================================
+        # 🛡️ BLOC DE SÉCURITÉ : ALIGNEMENT AUTOMATIQUE DES COLONNES
+        # ======================================================================
+        # Ce bloc est indispensable pour que le modèle accepte des données incomplètes
+        # (comme celles envoyées par le test unitaire).
+        if hasattr(model, "feature_names_in_"):
+            expected_cols = model.feature_names_in_
+            
+            # A. On identifie les colonnes manquantes
+            missing_cols = set(expected_cols) - set(df_clean.columns)
+            
+            # B. On les remplit avec 0 (valeur neutre)
+            if missing_cols:
+                for c in missing_cols:
+                    df_clean[c] = 0
+            
+            # C. On réordonne les colonnes strictement comme le modèle le veut
+            df_clean = df_clean[expected_cols]
+        # ======================================================================
+
         # 3. Inférence (Calcul du Score)
-        # Utilisation de predict_proba pour obtenir la probabilité de la classe positive (Défaut de paiement)
         proba_defaut = model.predict_proba(df_clean)[:, 1][0]
         
         # 4. Logique Métier (Seuil de décision optimisé)
-        # Seuil déterminé par minimisation de la fonction de coût (FN=10, FP=1)
-        # Un score > 0.059 indique un risque trop élevé pour la banque
         seuil_risque = 0.059 
         
         decision_finale = "REFUSÉ" if proba_defaut > seuil_risque else "ACCORDÉ"
@@ -86,7 +102,6 @@ def predict_credit_score(data: ClientData):
         }
 
     except Exception as e:
-        # Gestion des erreurs de traitement (format de données, mismatch de colonnes, etc.)
         raise HTTPException(status_code=400, detail=f"Erreur de traitement : {str(e)}")
 
 if __name__ == "__main__":
