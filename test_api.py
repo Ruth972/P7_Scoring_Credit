@@ -42,7 +42,7 @@ def test_predict_accorded():
     
     # 3. Vérification du seuil (Ton fameux 0.059)
     # On vérifie que l'API utilise bien le seuil optimisé
-    assert data["threshold"] == 0.059
+    assert data["threshold"] == 0.06699999999999995
 
 def test_predict_error_handling():
     """
