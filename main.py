@@ -14,7 +14,7 @@ app = FastAPI(
 # --- CONFIGURATION MLOPS ---
 # Définition du chemin vers l'artefact du modèle MLflow.
 # Utilisation d'un chemin relatif pour garantir la compatibilité entre l'environnement local et le conteneur Docker.
-MODEL_PATH = "./mlruns/9/models/m-fbb1dcbf89cc40bcae5150d60a304d7d/artifacts"
+MODEL_PATH = "./mlruns/9/models/m-0a84d69a2e314f0e82736c01fbcdd540/artifacts"
 
 # --- CHARGEMENT DU MODÈLE AU DÉMARRAGE ---
 print(f"Initialisation : Chargement du modèle depuis {MODEL_PATH}...")
@@ -90,7 +90,7 @@ def predict_credit_score(data: ClientData):
         proba_defaut = model.predict_proba(df_clean)[:, 1][0]
         
         # 4. Logique Métier (Seuil de décision optimisé)
-        seuil_risque = 0.059 
+        seuil_risque = 0.06699999999999995 
         
         decision_finale = "REFUSÉ" if proba_defaut > seuil_risque else "ACCORDÉ"
         
