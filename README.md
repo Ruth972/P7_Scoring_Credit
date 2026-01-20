@@ -53,3 +53,60 @@ Le projet est découpé en trois briques indépendantes :
 ```bash
 git clone [https://github.com/Ruth972/P7_Scoring_Credit.git](https://github.com/Ruth972/P7_Scoring_Credit.git)
 cd P7_Scoring_Credit
+```
+
+### 2. Créer un environnement virtuel
+```bash
+python -m venv venv
+source venv/bin/activate  # Sur Mac/Linux
+# venv\Scripts\activate   # Sur Windows
+```
+
+### 3. Installer les dépendances
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Lancer l'API (Backend)
+```bash
+uvicorn main:app --reload
+```
+L'API sera accessible sur http://127.0.0.1:8000.
+
+### 5. Lancer le Dashboard (Frontend)
+Dans un nouveau terminal :
+
+```bash
+streamlit run dashboard.py
+```
+Le dashboard s'ouvrira automatiquement dans votre navigateur.
+
+---
+
+## 📊 Performances du Modèle
+
+Suite à l'optimisation des hyperparamètres et du seuil métier :
+
+* **Modèle retenu :** LightGBM
+* **AUC Test :** 0.775
+* **Seuil optimal :** 0.067 (Priorité à la détection des risques)
+* **Coût Métier :** Minimisé pour réduire les pertes financières (Faux Négatifs).
+
+> **Note :** Une légère sur-performance sur le jeu d'entraînement a été identifiée et documentée, justifiant une régularisation accrue pour les futures itérations.
+
+---
+
+## ⚙️ MLOps & Industrialisation
+
+Le projet intègre une chaîne d'intégration et de déploiement continu (CI/CD) :
+
+* **Versioning :** Code hébergé sur GitHub.
+* **Tests Automatisés (pytest) :**
+    * Tests unitaires de l'API (Code 200, format JSON).
+    * Vérification de la cohérence du modèle.
+* **GitHub Actions :**
+    * À chaque push sur la branche `main`, le workflow lance l'installation des dépendances et l'exécution des tests.
+* **Déploiement Continu (CD) :**
+    * Si les tests passent, Render déploie automatiquement la nouvelle version de l'API.
+* **Monitoring :**
+    * Analyse du Data Drift avec **Evidently** pour surveiller la stabilité des données en production.
